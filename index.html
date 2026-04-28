@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Discover Your Digital Self</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #FBF7F2;
+    --bg-soft: #F4EEE6;
+    --ink: #1F1B16;
+    --ink-soft: #5C544A;
+    --ink-muted: #948B80;
+    --accent-d: #E8826B;   /* coral - Dominant */
+    --accent-i: #F2C14E;   /* honey - Influential */
+    --accent-s: #8FB996;   /* sage - Steady */
+    --accent-c: #7FA9C9;   /* powder blue - Compliant */
+    --line: #E5DCD0;
+    --card: #FFFFFF;
+    --shadow-soft: 0 1px 2px rgba(31, 27, 22, 0.04), 0 8px 24px rgba(31, 27, 22, 0.06);
+    --shadow-hover: 0 2px 4px rgba(31, 27, 22, 0.06), 0 12px 32px rgba(31, 27, 22, 0.10);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative ambient blobs */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: drift 20s ease-in-out infinite;
+  }
+  .blob-1 { width: 480px; height: 480px; background: #F2C14E; top: -160px; left: -160px; animation-delay: 0s; }
+  .blob-2 { width: 420px; height: 420px; background: #8FB996; bottom: -140px; right: -120px; animation-delay: -7s; }
+  .blob-3 { width: 360px; height: 360px; background: #E8826B; top: 40%; right: 20%; animation-delay: -14s; opacity: 0.18; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(40px, -30px) scale(1.05); }
+    66%      { transform: translate(-30px, 40px) scale(0.95); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.1s forwards;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .brand span {
+    color: var(--accent-d);
+  }
+  .progress-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-track {
+    height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.2s forwards;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-i), var(--accent-d));
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+  }
+  .screen.active {
+    display: flex;
+    animation: screenIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* ===== INTRO SCREEN ===== */
+  .intro {
+    text-align: left;
+    max-width: 560px;
+  }
+  .intro-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .intro h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 7vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .intro h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-d);
+  }
+  .intro p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin-bottom: 16px;
+    max-width: 480px;
+  }
+  .intro p.muted {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 40px;
+  }
+
+  .intro-meta {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 44px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .meta-value {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 16px 28px;
+    border-radius: 100px;
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s, background 0.3s;
+    box-shadow: var(--shadow-soft);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: #2C2820;
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn .arrow {
+    transition: transform 0.3s ease;
+  }
+  .btn:hover .arrow {
+    transform: translateX(4px);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    box-shadow: none;
+    padding: 16px 0;
+  }
+  .btn-ghost:hover {
+    background: transparent;
+    color: var(--ink);
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ===== QUESTION SCREEN ===== */
+  .question-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+  .question-text {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 34px);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    margin-bottom: 40px;
+    color: var(--ink);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 24px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    text-align: left;
+    font-family: inherit;
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232, 130, 107, 0.04), rgba(242, 193, 78, 0.04));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .option:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    color: var(--ink);
+  }
+  .option:hover::before {
+    opacity: 1;
+  }
+  .option.selected {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    transform: translateY(-2px);
+  }
+  .option.selected::before {
+    opacity: 0;
+  }
+  .option-marker {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .option:hover .option-marker {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .option.selected .option-marker {
+    background: var(--bg);
+    border-color: var(--bg);
+    color: var(--ink);
+  }
+  .option-text {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding-top: 2px;
+  }
+
+  /* Question navigation */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .q-nav .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ===== LOADING / TRANSITION ===== */
+  .calculating {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 0;
+  }
+  .calc-orbit {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 32px;
+  }
+  .calc-orbit span {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    animation: spin 1.4s linear infinite;
+  }
+  .calc-orbit span:nth-child(1) { border-top-color: var(--accent-d); }
+  .calc-orbit span:nth-child(2) { border-right-color: var(--accent-i); animation-duration: 1.8s; }
+  .calc-orbit span:nth-child(3) { border-bottom-color: var(--accent-s); animation-duration: 2.2s; }
+  .calc-orbit span:nth-child(4) { border-left-color: var(--accent-c); animation-duration: 2.6s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .calc-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+  }
+
+  /* ===== RESULT SCREEN ===== */
+  .result {
+    text-align: left;
+  }
+  .result-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 0.2s forwards;
+  }
+
+  .result-letter {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(180px, 32vw, 280px);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    margin-bottom: 8px;
+    background: linear-gradient(180deg, var(--result-color, var(--ink)) 30%, var(--ink) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    animation: letterIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s forwards;
+  }
+  @keyframes letterIn {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .result-type {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.15;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 0.9s forwards;
+  }
+  .result-tagline {
+    font-size: 15px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 1.05s forwards;
+  }
+
+  .result-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 0 0 36px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 1.2s forwards;
+    transform-origin: left;
+  }
+
+  .result-section {
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out forwards;
+    margin-bottom: 36px;
+  }
+  .result-section:nth-of-type(1) { animation-delay: 1.3s; }
+  .result-section:nth-of-type(2) { animation-delay: 1.45s; }
+  .result-section:nth-of-type(3) { animation-delay: 1.6s; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--result-color, var(--ink));
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .section-body {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  .career-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .career-item {
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--ink);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .career-item:hover {
+    border-color: var(--result-color, var(--ink));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+  .career-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--result-color, var(--ink));
+    flex-shrink: 0;
+  }
+
+  .result-actions {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 1.8s forwards;
+  }
+  .result-actions p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 540px) {
+    .container { padding: 24px 20px 60px; }
+    .topbar { margin-bottom: 32px; }
+    .progress-track { margin-bottom: 40px; }
+    .intro-meta { flex-wrap: wrap; gap: 20px; }
+    .career-list { grid-template-columns: 1fr; }
+    .option { padding: 18px 20px; font-size: 14.5px; }
+    .question-text { margin-bottom: 28px; }
+    .q-nav { margin-top: 28px; padding-top: 20px; }
+  }
+</style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="container">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">digital<span>.</span>self</div>
+      <div class="progress-text" id="progressText">— Mulai —</div>
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- INTRO SCREEN -->
+    <section class="screen active" id="screenIntro">
+      <div class="intro">
+        <span class="intro-eyebrow">Tech Personality Quiz</span>
+        <h1>Cari tahu, kamu <em>tipe</em> apa<br>di dunia digital.</h1>
+        <p>15 pertanyaan singkat tentang gaya kamu hadepin gadget, internet, dan kerja kelompok di era digital.</p>
+        <p class="muted">Jawab dengan jujur, gak ada jawaban benar atau salah — yang ada cuma kamu yang lebih kenal sama diri sendiri.</p>
+
+        <div class="intro-meta">
+          <div class="meta-item">
+            <span class="meta-label">Pertanyaan</span>
+            <span class="meta-value">15</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Estimasi</span>
+            <span class="meta-value">±5 menit</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Hasil</span>
+            <span class="meta-value">Instan</span>
+          </div>
+        </div>
+
+        <button class="btn" onclick="startQuiz()">
+          Mulai Sekarang
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- QUESTION SCREEN -->
+    <section class="screen" id="screenQuestion">
+      <div class="question-num" id="questionNum">Pertanyaan 01</div>
+      <h2 class="question-text" id="questionText"></h2>
+      <div class="options" id="optionsContainer"></div>
+      <div class="q-nav">
+        <button class="btn btn-ghost" id="btnBack" onclick="goBack()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Kembali
+        </button>
+        <button class="btn" id="btnNext" onclick="goNext()" disabled>
+          <span id="btnNextLabel">Lanjut</span>
+          <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- CALCULATING SCREEN -->
+    <section class="screen" id="screenCalculating">
+      <div class="calculating">
+        <div class="calc-orbit" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="calc-text">Menyusun hasil kamu…</div>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section class="screen" id="screenResult">
+      <div class="result">
+        <div class="result-eyebrow">— Tipe Kamu Adalah —</div>
+        <div class="result-letter" id="resultLetter">D</div>
+        <h2 class="result-type" id="resultType">Si Pemimpin & Eksekutor</h2>
+        <p class="result-tagline" id="resultTagline">To the point, gaspol, fokus target.</p>
+
+        <div class="result-divider"></div>
+
+        <div class="result-section">
+          <div class="section-label">Tentang Kamu</div>
+          <p class="section-body" id="resultDesc"></p>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Kekuatan Utama</div>
+          <p class="section-body" id="resultStrength"></p>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Karir Tech yang Cocok Buat Kamu</div>
+          <ul class="career-list" id="careerList"></ul>
+        </div>
+
+        <div class="result-actions">
+          <p>Penasaran sama tipe lain?</p>
+          <button class="btn" onclick="restartQuiz()">
+            Ulangi Kuis
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  // ============ QUIZ DATA ============
+  // Each answer is tagged with DISC type. Points: S=1, C=2, I=3, D=4
+  // Answers will be shuffled per-question on render, but scoring follows the type.
+  const POINTS = { S: 1, C: 2, I: 3, D: 4 };
+
+  const questions = [
+    {
+      q: "Kalau kamu disuruh bikin aplikasi bareng temen kelompok, peran apa yang kamu ambil?",
+      a: [
+        { t: "S", text: "Yang penting mastiin semua temen seneng ngerjainnya dan gak berantem." },
+        { t: "C", text: "Yang ngecek kodingan atau laporannya teliti banget biar gak ada error." },
+        { t: "I", text: "Yang bakal maju presentasiin aplikasinya di depan kelas biar kelihatan keren." },
+        { t: "D", text: "Yang nentuin ide utama aplikasinya dan ngebagi-bagi tugas ke semua anggota." }
+      ]
+    },
+    {
+      q: "Waktu lagi mabar (main bareng) game online sama temen, gaya main kamu itu...",
+      a: [
+        { t: "S", text: "Suka nge-support temen atau nge-heal biar bisa menang bareng-bareng." },
+        { t: "C", text: "Paham banget sama strategi, map, dan kombinasi item yang paling optimal." },
+        { t: "I", text: "Open mic terus dan ngelawak biar suasana mabar jadi rame dan seru." },
+        { t: "D", text: "Jadi in-game leader yang nyuruh temen buat maju, mundur, atau serang." }
+      ]
+    },
+    {
+      q: "Kalau kamu nabung buat beli HP baru, hal pertama yang jadi pertimbanganmu adalah:",
+      a: [
+        { t: "S", text: "Milih merk yang dipakai juga sama circle temen-temen deket kamu." },
+        { t: "C", text: "Baca review detail, bandingin kapasitas RAM, memori, dan spesifikasi mesinnya." },
+        { t: "I", text: "Milih yang desainnya paling stylish dan kameranya kece badai buat update story." },
+        { t: "D", text: "Nyari merk terbaik dengan teknologi paling canggih rilis terbaru." }
+      ]
+    },
+    {
+      q: "Pas ada tugas bikin video TikTok/Reels bareng teman sekelas, kamu biasanya:",
+      a: [
+        { t: "S", text: "Ngebantuin megangin properti atau nyiapin tempat, yang penting seru-seruan bareng." },
+        { t: "C", text: "Sibuk ngedit, ngatur transisi, cek resolusi video, dan nambahin teks yang rapi." },
+        { t: "I", text: "Jadi talent utama yang joget atau ngomong paling heboh di depan kamera." },
+        { t: "D", text: "Jadi sutradara yang ngatur gaya, nentuin konsep, dan ngarahin semua orang." }
+      ]
+    },
+    {
+      q: "Lagi asik-asik ngerjain tugas, eh tiba-tiba WiFi di rumah lemot parah. Kamu bakal:",
+      a: [
+        { t: "S", text: "Pasrah aja, nungguin sambil rebahan santai nunggu jaringannya bener lagi." },
+        { t: "C", text: "Cek router, tes ping di HP, atau cari solusi cara benerin WiFi di Google." },
+        { t: "I", text: "Langsung ngeluh di grup WA atau bikin story biar dapet simpati temen." },
+        { t: "D", text: "Langsung telepon provider internet dan minta mereka benerin saat itu juga." }
+      ]
+    },
+    {
+      q: "Kamu gak sengaja nemuin fitur rahasia yang tersembunyi di sebuah aplikasi:",
+      a: [
+        { t: "S", text: "Kamu kasih tahu ke temen-temen deket aja biar mereka ikutan tahu." },
+        { t: "C", text: "Kamu ngulik terus fiturnya sampai benar-benar paham gimana cara kerjanya." },
+        { t: "I", text: "Kamu screen-record dan langsung share di medsos biar di-like banyak orang." },
+        { t: "D", text: "Kamu mikir gimana caranya fitur ini bisa bikin aktivitasmu makin cepat dan produktif." }
+      ]
+    },
+    {
+      q: "Saat mau update OS HP tapi muncul notif \"Memori Penuh\":",
+      a: [
+        { t: "S", text: "Minta tolong atau nanya temen, enaknya hapus file yang mana ya?" },
+        { t: "C", text: "Back-up semua data penting ke Google Drive dengan rapi, baru deh update." },
+        { t: "I", text: "Hapus beberapa aplikasi lama demi bisa download fitur baru yang lagi hype." },
+        { t: "D", text: "Langsung hapus video atau file gede tanpa ragu biar update bisa langsung jalan." }
+      ]
+    },
+    {
+      q: "Di grup WA kelas lagi heboh diskusi nentuin tema acara sekolah. Posisi kamu:",
+      a: [
+        { t: "S", text: "Nyimak aja dan ikut suara terbanyak, biar gak bikin ribut." },
+        { t: "C", text: "Nanyain detail teknisnya, \"Anggarannya berapa? Rundown acaranya gimana?\"" },
+        { t: "I", text: "Ngirim stiker dan meme kocak biar chat-nya nggak terlalu kaku." },
+        { t: "D", text: "Ngambil alih diskusi, ngasih keputusan final, dan minta semua setuju." }
+      ]
+    },
+    {
+      q: "Kalau kamu kepo dan lagi nge-stalking profil medsos seseorang:",
+      a: [
+        { t: "S", text: "Cuma scroll-scroll sekilas buat tahu aja tanpa niat interaksi." },
+        { t: "C", text: "Scroll terus sampai postingan paling bawah dan ngecek siapa aja yang sering comment." },
+        { t: "I", text: "Sengaja spam like atau komen sok kenal biar dia notice kamu." },
+        { t: "D", text: "Kalau memang ada perlu, kamu langsung DM dia to the point." }
+      ]
+    },
+    {
+      q: "Ada temen yang nge-chat panjang lebar curhat kalau akunnya ke-hack:",
+      a: [
+        { t: "S", text: "Kamu balesin chat-nya dengan sabar dan nenangin perasaannya." },
+        { t: "C", text: "Kamu kasih instruksi bertahap cara ganti password dan lapor ke help center." },
+        { t: "I", text: "Kamu ngehibur dia dengan ngajakin main game atau ngomongin hal lain yang lucu." },
+        { t: "D", text: "Kamu langsung minta detail loginnya dan coba ngambil alih akunnya sendiri." }
+      ]
+    },
+    {
+      q: "Pas dikasih tugas bikin presentasi kelompok pakai Canva:",
+      a: [
+        { t: "S", text: "Kamu ikutin aja desain yang udah dipilih temen, sambil bantuin cari ikon yang pas." },
+        { t: "C", text: "Kamu super rewel soal font, spasi, dan warna yang harus matching dan presisi." },
+        { t: "I", text: "Kamu milih template yang paling cerah dan nambahin animasi transisi yang heboh." },
+        { t: "D", text: "Kamu bikin kerangka slide-nya, dan nyuruh temen-temen kamu buat ngisi materinya." }
+      ]
+    },
+    {
+      q: "Waktu lagi jalan sama temen dan dapet notifikasi \"Battery Low 10%\":",
+      a: [
+        { t: "S", text: "Santai aja, nanti juga ada yang minjemin powerbank." },
+        { t: "C", text: "Segera nyalain Battery Saver, tutup background apps, dan turunin brightness." },
+        { t: "I", text: "Sempetin bikin story, \"Yah baterai mau abis, maaf kalau slow respon ya guys!\"" },
+        { t: "D", text: "Langsung meluncur nyari colokan terdekat saat itu juga karena nggak mau mati gaya." }
+      ]
+    },
+    {
+      q: "Pas kamu ada PR mendadak jam 10 malem, kamu bakal:",
+      a: [
+        { t: "S", text: "Buka grup WA kelas, ngobrol bareng temen sambil ngerjain biar gak ngerasa sendirian." },
+        { t: "C", text: "Baca soal pelan-pelan, nyusun langkah pengerjaan rapi, baru mulai eksekusi satu-satu." },
+        { t: "I", text: "Sambil dengerin lagu kenceng atau buka TikTok dikit-dikit biar mood-nya naik." },
+        { t: "D", text: "Langsung gas kerjain tanpa basa-basi, target selesai dalam waktu sesingkat mungkin." }
+      ]
+    },
+    {
+      q: "Kalau coba dilihat, feed Instagram atau TikTok kamu biasanya lebih banyak berisi:",
+      a: [
+        { t: "S", text: "Hal-hal positif, quotes motivasi, atau kebersamaan sama sahabat-sahabat terdekat." },
+        { t: "C", text: "Info edukasi, lifehacks, atau tutorial merakit/mengatur sesuatu." },
+        { t: "I", text: "Tren-tren terbaru, challenge viral, atau vlog keseharian yang seru." },
+        { t: "D", text: "Opini tegas tentang sesuatu, pencapaian kamu, atau review hal-hal premium." }
+      ]
+    },
+    {
+      q: "Menurut kamu, teknologi dan internet itu diciptakan paling utama untuk:",
+      a: [
+        { t: "S", text: "Menjaga komunikasi silaturahmi biar orang yang jauh kerasa dekat." },
+        { t: "C", text: "Menyelesaikan masalah dan bikin segala perhitungan jadi terstruktur." },
+        { t: "I", text: "Ajang mengekspresikan diri tanpa batas dan dapet banyak teman baru." },
+        { t: "D", text: "Alat buat bikin kita cepat sukses dan menguasai berbagai macam skill." }
+      ]
+    }
+  ];
+
+  // Fisher-Yates shuffle
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Pre-shuffle answer order for each question once at load time
+  // shuffledOrders[i] = array of indices into questions[i].a in display order
+  const shuffledOrders = questions.map(q => shuffle([0, 1, 2, 3]));
+
+  const results = {
+    S: {
+      letter: "S",
+      type: "Si Pendengar Setia & Team Player",
+      tagline: "Sabar, suportif, perekat yang menyatukan tim.",
+      color: "var(--accent-s)",
+      desc: "Kamu adalah \"lem\" yang menyatukan tim. Di pergaulan maupun proyek bareng, kamu orangnya sabar, suportif, dan selalu siap sedia ngebantu temen tanpa pamrih. Kamu lebih suka ketenangan dan kekompakan daripada harus menonjol sendirian.",
+      strength: "Empati tinggi, pendengar yang baik, konsisten, dan loyal. Orang-orang merasa aman cerita ke kamu, dan kamu bisa nyelesain konflik tanpa drama. Ini superpower banget di tim mana pun.",
+      careers: ["UX Researcher", "Customer Success", "Product Support Engineer", "Tech Educator", "QA Tester", "Community Manager"]
+    },
+    C: {
+      letter: "C",
+      type: "Si Detail & Problem Solver",
+      tagline: "Teliti, logis, standarnya selalu sempurna.",
+      color: "var(--accent-c)",
+      desc: "Kamu jagonya analisa! Sangat teliti, mikir pakai logika, dan kalau ngerjain sesuatu standarnya harus sempurna. Bagimu, memecahkan masalah itu seru banget — apalagi kalau kamu ngerti detail sampai ke akar-akarnya.",
+      strength: "Analisa tajam, perhatian ke detail luar biasa, dan kemampuan menemukan akar masalah yang sering kelewat orang lain. Kamu yang bikin kualitas kerja tim naik ke level berikutnya.",
+      careers: ["Software Engineer", "Data Analyst", "Cybersecurity Specialist", "Backend Developer", "Database Engineer", "AI/ML Researcher"]
+    },
+    I: {
+      letter: "I",
+      type: "Si Ceria & Storyteller",
+      tagline: "Energik, kreatif, jago bikin orang tertarik.",
+      color: "var(--accent-i)",
+      desc: "Energi kamu gak ada habisnya! Kamu jago banget bikin suasana jadi seru dan paling pinter meyakinkan orang lain. Gampang bergaul, suka jadi pusat perhatian, dan selalu punya ide-ide out-of-the-box yang kreatif banget.",
+      strength: "Komunikasi yang menarik, kreativitas tinggi, dan kemampuan memotivasi orang lain. Kamu bisa ngubah ide kompleks jadi cerita yang gampang dimengerti — skill langka yang dicari banyak perusahaan tech.",
+      careers: ["Product Designer", "Content Creator", "Digital Marketer", "Frontend Developer", "Developer Advocate", "UX Writer"]
+    },
+    D: {
+      letter: "D",
+      type: "Si Pemimpin & Eksekutor",
+      tagline: "To the point, gaspol, fokus target.",
+      color: "var(--accent-d)",
+      desc: "To the point dan anti ribet! Kamu orangnya gaspol, berani ambil keputusan, dan selalu fokus sama target. Kalau ada tantangan, kamu yang biasanya paling pertama maju buat ngambil alih komando biar semuanya selesai dengan sukses.",
+      strength: "Kepemimpinan natural, decisive, dan kemampuan eksekusi yang cepat. Kamu yang bikin proyek beneran jadi dari sekadar wacana — visi besar dan keberanian eksekusi adalah kombinasi yang dicari di tech.",
+      careers: ["Tech Founder / Startup CEO", "Product Manager", "Engineering Manager", "Tech Consultant", "Project Lead", "Solutions Architect"]
+    }
+  };
+
+  // ============ STATE ============
+  let currentQ = 0;
+  let answers = new Array(questions.length).fill(null); // stores DISC type: "S" | "C" | "I" | "D"
+
+  // ============ NAVIGATION ============
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startQuiz() {
+    currentQ = 0;
+    answers = new Array(questions.length).fill(null);
+    renderQuestion();
+    showScreen('screenQuestion');
+    updateProgress();
+  }
+
+  function renderQuestion() {
+    const q = questions[currentQ];
+    const order = shuffledOrders[currentQ]; // shuffled indices into q.a
+    document.getElementById('questionNum').textContent = `Pertanyaan ${String(currentQ + 1).padStart(2, '0')}`;
+    document.getElementById('questionText').textContent = q.q;
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    order.forEach((origIdx, displayIdx) => {
+      const answer = q.a[origIdx]; // { t: "D"|"I"|"S"|"C", text: "..." }
+      const letter = String.fromCharCode(65 + displayIdx); // A, B, C, D — visual marker only
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      if (answers[currentQ] === answer.t) btn.classList.add('selected');
+      btn.innerHTML = `
+        <span class="option-marker">${letter}</span>
+        <span class="option-text">${answer.text}</span>
+      `;
+      btn.onclick = () => selectOption(answer.t);
+      container.appendChild(btn);
+    });
+
+    // Buttons
+    document.getElementById('btnBack').disabled = currentQ === 0;
+    document.getElementById('btnNext').disabled = answers[currentQ] === null;
+    document.getElementById('btnNextLabel').textContent = currentQ === questions.length - 1 ? 'Lihat Hasil' : 'Lanjut';
+
+    document.getElementById('progressText').textContent = `${currentQ + 1} / ${questions.length}`;
+  }
+
+  function selectOption(discType) {
+    answers[currentQ] = discType;
+    // Update visual selection state based on display order
+    const order = shuffledOrders[currentQ];
+    const opts = document.querySelectorAll('.option');
+    opts.forEach((opt, displayIdx) => {
+      const origIdx = order[displayIdx];
+      const optType = questions[currentQ].a[origIdx].t;
+      opt.classList.toggle('selected', optType === discType);
+    });
+    document.getElementById('btnNext').disabled = false;
+
+    // Auto-advance after a brief delight pause
+    setTimeout(() => {
+      if (answers[currentQ] !== null) goNext();
+    }, 380);
+  }
+
+  function goNext() {
+    if (answers[currentQ] === null) return;
+    if (currentQ < questions.length - 1) {
+      currentQ++;
+      renderQuestion();
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Finish
+      finishQuiz();
+    }
+  }
+
+  function goBack() {
+    if (currentQ > 0) {
+      currentQ--;
+      renderQuestion();
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function updateProgress() {
+    const pct = ((currentQ + 1) / questions.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  // ============ FINISH ============
+  function finishQuiz() {
+    showScreen('screenCalculating');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressText').textContent = 'Selesai';
+
+    // Sum points based on DISC type of each answer
+    const total = answers.reduce((sum, t) => sum + (POINTS[t] || 0), 0);
+    let typeKey;
+    if (total <= 26) typeKey = 'S';
+    else if (total <= 38) typeKey = 'C';
+    else if (total <= 50) typeKey = 'I';
+    else typeKey = 'D';
+
+    setTimeout(() => {
+      renderResult(typeKey);
+      showScreen('screenResult');
+    }, 1800);
+  }
+
+  function renderResult(key) {
+    const r = results[key];
+    document.documentElement.style.setProperty('--result-color', r.color);
+
+    document.getElementById('resultLetter').textContent = r.letter;
+    document.getElementById('resultLetter').style.setProperty('--result-color', r.color);
+    document.getElementById('resultType').textContent = r.type;
+    document.getElementById('resultTagline').textContent = r.tagline;
+    document.getElementById('resultDesc').textContent = r.desc;
+    document.getElementById('resultStrength').textContent = r.strength;
+
+    const list = document.getElementById('careerList');
+    list.innerHTML = '';
+    r.careers.forEach(c => {
+      const li = document.createElement('li');
+      li.className = 'career-item';
+      li.innerHTML = `<span class="career-dot"></span>${c}`;
+      list.appendChild(li);
+    });
+
+    // Re-trigger result section animations by removing & re-adding
+    document.querySelectorAll('#screenResult .result-section, #screenResult .result-letter, #screenResult .result-type, #screenResult .result-tagline, #screenResult .result-eyebrow, #screenResult .result-divider, #screenResult .result-actions').forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight; // reflow
+      el.style.animation = '';
+    });
+  }
+
+  function restartQuiz() {
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressText').textContent = '— Mulai —';
+    showScreen('screenIntro');
+  }
+</script>
+</body>
+</html>
